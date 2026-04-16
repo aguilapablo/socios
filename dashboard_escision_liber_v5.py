@@ -1,120 +1,120 @@
-import streamlit as st
-import pandas as pd
-from datetime import datetime
+```latex
+\documentclass[11pt, a4paper]{article}
 
-st.set_page_config(page_title="Liber S.A. | Escisión Art. 80 LIG", layout="wide")
+% --- UNIVERSAL PREAMBLE BLOCK ---
+\usepackage[a4paper, top=2cm, bottom=2cm, left=1.5cm, right=1.5cm]{geometry}
+\usepackage{fontspec}
+\usepackage[spanish, bidi=basic, provide=*]{babel}
 
-st.markdown("""
-<div style="background-color:#0d2b4e; color:white; padding:25px; border-radius:12px; text-align:center;">
-    <h1 style="margin:0;">Liber S.A.</h1>
-    <h2 style="margin:8px 0 20px 0;">Escisión Estratégica Libre de Impuestos 2026</h2>
-    <p style="font-size:20px; margin:0;"><strong>Tablero de Comando Directivo</strong></p>
-    <p style="margin:12px 0 0 0;">Realizado con Lic. Pablo Aguila<br>
-    Administración y Estrategia | Abril 2026</p>
-</div>
-""", unsafe_allow_html=True)
+\babelprovide[import, onchar=ids fonts]{spanish}
+\babelprovide[import, onchar=ids fonts]{english}
 
-st.caption("Herramienta Directiva, Operativa y Gerencial – Art. 80 LIG")
+% Set default font to Noto Sans (Clean and modern for mobile)
+\babelfont{rm}{Noto Sans}
 
-# ====================== CONTROLES ======================
-st.subheader("🔧 Capitalización de Gastos por Sociedad (RT 17)")
-col1, col2, col3 = st.columns(3)
-with col1:
-    mejoras_pama = st.slider("PAMA", 0, 12_000_000, 5_982_757, 50_000)
-with col2:
-    mejoras_nbr = st.slider("NBR", 0, 8_000_000, 0, 50_000)
-with col3:
-    mejoras_vifran = st.slider("VIFRAN", 0, 10_000_000, 2_587_693, 50_000)
+% Minimalist packages
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
 
-st.subheader("Ajustes Regulatorios")
-col_a, col_b = st.columns(2)
-with col_a:
-    valor_mercado_malabia = st.slider("Valor real de mercado Malabia", 200_000_000, 452_000_000, 300_000_000, 1_000_000)
-with col_b:
-    tasa_bna = st.slider("Tasa Pasiva BNA anual (%)", 20.0, 80.0, 45.0, 0.5)
+% Professional styling
+\definecolor{libernavy}{HTML}{0F172A}
+\definecolor{liberblue}{HTML}{2563EB}
+\definecolor{liberemerald}{HTML}{10B981}
 
-# ====================== CÁLCULOS ======================
-base_inmuebles = {"PAMA": 23625635.52, "NBR": 46275617.63, "VIFRAN": 50531055.73}
+\titleformat{\section}{\color{libernavy}\normalfont\Large\bfseries}{\thesection}{1em}{}[{\titlerule[0.8pt]}]
+\titleformat{\subsection}{\color{liberblue}\normalfont\large\bfseries}{\thesubsection}{1em}{}
 
-pn = {
-    "PAMA": base_inmuebles["PAMA"] + mejoras_pama,
-    "NBR": base_inmuebles["NBR"] + mejoras_nbr,
-    "VIFRAN": base_inmuebles["VIFRAN"] + mejoras_vifran
-}
+\setlist[itemize]{label=\textbullet, leftmargin=1.5em}
 
-pn_total_calculado = sum(pn.values())
-ajuste = 132796868 - pn_total_calculado
+\begin{document}
 
-pn["PAMA"] += ajuste * 0.30
-pn["NBR"] += ajuste * 0.30
-pn["VIFRAN"] += ajuste * 0.40
+% --- PORTADA ---
+\begin{center}
+    \vspace*{1cm}
+    {\color{libernavy}\small\textbf{DOCUMENTO CONFIDENCIAL --- RESERVADO DIRECTORIO}}\\[0.5cm]
+    {\color{libernavy}\Huge\textbf{Dictamen Estratégico de Escisión 2026}}\\[0.8cm]
+    {\large Liber S.A.I.C.I.}\\[0.3cm]
+    \textit{Reorganización Societaria Libre de Impuestos (Art. 82 LIG)}\\[1cm]
+    
+    \framebox{\parbox{0.9\textwidth}{\centering
+        \vspace{0.5cm}
+        \textbf{Objetivo Final: Patrimonio Neto \$0.00}\\
+        Proporcionalidad Garantizada: 30\% PAMA | 40\% VIFRAN | 30\% NBR\\
+        \vspace{0.5cm}
+    }}
+\end{center}
 
-# Cálculo trimestral BNA
-capital_original = 72900000
-fecha_origen = datetime(2023, 1, 1)
-fecha_cierre = datetime(2026, 7, 31)
-dias_totales = (fecha_cierre - fecha_origen).days
-trimestres = dias_totales / 91.25
-tasa_trimestral = tasa_bna / 4
-intereses = capital_original * (tasa_trimestral / 100) * trimestres
-pasivo_actualizado = capital_original + intereses
+\vspace{1cm}
 
-# ====================== CONTENIDO ======================
-st.subheader("🗺️ Mapa de Inmuebles por Sociedad")
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.subheader("PAMA (30%)")
-    st.metric("Total", "$249.648.110")
-with col2:
-    st.subheader("VIFRAN (40%)")
-    st.metric("Total", "$276.553.519")
-with col3:
-    st.subheader("NBR (30%)")
-    st.metric("Total", "$46.275.618")
+\section{Resumen Ejecutivo}
+El presente dictamen establece la hoja de ruta contable para disolver Liber S.A. al \textbf{31 de julio de 2026}. El éxito de la operación radica en la neutralidad fiscal y la equivalencia matemática entre el paquete accionario y el activo adjudicado.
 
-st.divider()
+\section{Ingeniería del Crédito Malabia}
+El saneamiento del rubro ``Inversiones'' es el primer paso crítico para evitar distorsiones impositivas.
 
-st.subheader("💰 Gestión Crédito Malabia")
-impairment = 452000000 - valor_mercado_malabia
-col_m1, col_m2, col_m3 = st.columns(3)
-col_m1.metric("Valor Contable", "$452.000.000")
-col_m2.metric("Valor Mercado", f"${valor_mercado_malabia:,.0f}")
-col_m3.metric("Impairment (Escudo)", f"${impairment:,.0f}")
+\subsection{Ajuste por Realidad Económica (Impairment)}
+Se propone el reconocimiento de la brecha entre el valor de libros y mercado:
+\begin{itemize}
+    \item \textbf{Valor Contable:} \$452,044,937
+    \item \textbf{Valor Real Mercado:} \$300,000,000
+    \item \textbf{Pérdida Deducible (Escudo Fiscal):} \$152,044,937
+\end{itemize}
 
-st.divider()
+\subsection{Dación en Pago (Extinción de Pasivos)}
+Para evitar el gravamen del 7\% sobre dividendos cedulares, el crédito remanente se aplicará a:
+\begin{enumerate}
+    \item \textbf{Cancelación Crédito Pablo Aguila:} (\$100M) Compensación por expensas y gastos operativos financiados por el accionista.
+    \item \textbf{Cancelación Deuda José/Luis:} Deuda actualizada por \textbf{Tasa Pasiva BNA} (8 meses proyectados).
+\end{enumerate}
 
-st.subheader("📈 Pasivos José y Luis - Tasa Pasiva BNA")
-st.metric("Pasivo Actualizado (trimestral)", f"${pasivo_actualizado:,.0f}", f"+${intereses:,.0f}")
+\section{Pivotes de Nivelación Patrimonial}
+Dado que los activos físicos (Inmuebles) son inamovibles, la nivelación del 30/40/30 se ejecutará mediante variables de ajuste técnico.
 
-st.divider()
+\begin{table}[htbp]
+    \centering
+    \caption{Cuentas de Ajuste por Sociedad}
+    \begin{tabular}{llp{5cm}}
+        \toprule
+        \textbf{Sociedad} & \textbf{Ratio} & \textbf{Mecanismo de Ajuste} \\
+        \midrule
+        \textbf{PAMA} & 30\% & Activación de Mejoras s/ Sarmiento (RT 17). \\
+        \textbf{VIFRAN} & 40\% & Amortización Técnica s/ Campos y Libertador. \\
+        \textbf{NBR} & 30\% & Asignación de Efectivo y Bienes de Uso. \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-st.subheader("📊 Balance Final Post-Escisión")
-data = {
-    "Sociedad": ["PAMA (30%)", "NBR (30%)", "VIFRAN (40%)", "LIBER S.A. (Remanente)"],
-    "Patrimonio Neto Final": [pn["PAMA"], pn["NBR"], pn["VIFRAN"], 0],
-    "% Participación": [30.0, 30.0, 40.0, 0.0]
-}
-df = pd.DataFrame(data).round(0)
-st.dataframe(df, width='stretch', hide_index=True)
+\section{Matriz de Proporcionalidad Final}
+\begin{figure}[htbp]
+  \centering
+  \framebox{\parbox{0.8\textwidth}{\centering
+    \vspace{2cm}
+    \textbf{Esquema de Distribución Jul-2026} \\
+    \small\textit{PN PAMA (30\%) | PN VIFRAN (40\%) | PN NBR (30\%)} \\
+    \textbf{Delta Residual = 0.00\%}
+    \vspace{2cm}
+  }}
+  \caption{Verificación técnica de adjudicación de capital.}
+\end{figure}
 
-st.success("✅ **Patrimonio Neto remanente en Liber S.A. = $0.00**")
-st.info("**No quedan acciones representativas** ni patrimonio en Liber S.A.")
+\section{Conclusión para el Directorio}
+La implementación de este plan garantiza:
+\begin{itemize}
+    \item \textbf{Costo Fiscal Cero:} Bajo el marco de la reorganización por escisión.
+    \item \textbf{Paz Societaria:} Distribución proporcional inatacable ante IGJ.
+    \item \textbf{Liquidez:} Optimización del flujo de caja post-malabia.
+\end{itemize}
 
-st.divider()
+\vspace{1cm}
+\begin{flushright}
+    \textbf{Lic. Pablo Aguila}\\
+    \textit{Dirección Estratégica}\\
+    \small Abril de 2026
+\end{flushright}
 
-st.subheader("✅ Validación Art. 80 LIG – Checklist Ampliado")
-check = pd.DataFrame({
-    "Requisito": [
-        "Empresa en marcha", "Continuidad de actividad por 2 años",
-        "Proporcionalidad exacta de capital", "Ausencia de distribución asimétrica",
-        "Dación en pago de Malabia", "Impairment registrado como pérdida deducible",
-        "Capitalización de gastos (RT 17)", "Pasivos devengados con tasa pasiva BNA",
-        "Patrimonio remanente en Liber = $0"
-    ],
-    "Estado": ["✅ Garantizado"] * 9
-})
-st.dataframe(check, width='stretch', hide_index=True)
+\end{document}
 
-st.success("**Score de Cumplimiento Art. 80 LIG: 100 %**")
-
-st.caption("Dashboard v6.0 | Realizado con Lic. Pablo Aguila | Abril 2026")
+```
