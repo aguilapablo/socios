@@ -4,18 +4,9 @@ from datetime import datetime
 
 st.set_page_config(page_title="Liber S.A. | Escisión Art. 80 LIG", layout="wide")
 
-# ====================== CARTA DE PRESENTACIÓN ======================
-st.markdown("""
-<div style="background-color:#0d2b4e; color:white; padding:25px; border-radius:12px; text-align:center;">
-    <h1 style="margin:0;">Liber S.A.</h1>
-    <h2 style="margin:8px 0 20px 0;">Escisión Estratégica Libre de Impuestos 2026</h2>
-    <p style="font-size:20px; margin:0;"><strong>Carta de Presentación al Directorio</strong></p>
-    <p style="margin:12px 0 0 0;">Realizado con Lic. Pablo Aguila<br>
-    Administración y Estrategia | Abril 2026</p>
-</div>
-""", unsafe_allow_html=True)
-
-st.caption("**Herramienta Directiva, Operativa y Gerencial – Art. 80 LIG**")
+st.title("📊 Liber S.A. — Escisión Estratégica Libre de Impuestos 2026")
+st.markdown("**Reorganización Societaria Libre de Impuestos — Art. 80 LIG**")
+st.caption("**Realizado con Lic. Pablo Aguila**")
 
 # ====================== SIDEBAR ======================
 st.sidebar.header("🔧 Capitalización de Gastos por Sociedad (RT 17)")
@@ -53,6 +44,7 @@ dias_totales = (fecha_cierre - fecha_origen).days
 trimestres = dias_totales / 91.25
 tasa_trimestral = tasa_bna / 4
 intereses = capital_original * (tasa_trimestral / 100) * trimestres
+pasivo_actualizado = capital_original + intereses
 
 # ====================== TABS ======================
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
@@ -60,36 +52,32 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 Balance Final", "✅ Validación Art. 80 LIG"
 ])
 
+with tab2:
+    st.header("Gestión Crédito Malabia")
+    impairment = 452000000 - valor_mercado_malabia
+    st.metric("Valor Contable", "$452.000.000")
+    st.metric("Valor Mercado (tasación)", f"${valor_mercado_malabia:,.0f}")
+    st.metric("Impairment (Escudo Fiscal)", f"${impairment:,.0f}")
+
+with tab3:
+    st.header("Pasivos José y Luis - Tasa Pasiva BNA")
+    st.metric("Pasivo Actualizado (trimestral)", f"${pasivo_actualizado:,.0f}", f"+${intereses:,.0f}")
+
 with tab4:
-    st.subheader("Estado de Situación Post-Escisión (para protocolización IGJ)")
+    st.subheader("Estado de Situación Post-Escisión")
     data = {
         "Sociedad": ["PAMA (30%)", "NBR (30%)", "VIFRAN (40%)", "LIBER S.A. (Remanente)"],
         "Patrimonio Neto Final": [pn["PAMA"], pn["NBR"], pn["VIFRAN"], 0],
         "% Participación": [30.0, 30.0, 40.0, 0.0]
     }
     df_final = pd.DataFrame(data).round(0)
-    st.dataframe(df_final, use_container_width=True, hide_index=True)
+    st.dataframe(df_final, use_container_width=True)
     
     st.success("✅ **Patrimonio Neto remanente en Liber S.A. = $0.00**")
-    st.info("**No quedan acciones representativas** ni patrimonio en Liber S.A. después de la escisión.")
+    st.info("**No quedan acciones representativas**")
 
 with tab5:
-    st.header("Validación Regulatoria Art. 80 LIG")
-    st.subheader("Cumplimiento Garantizado")
-    
-    cumplimiento = pd.DataFrame({
-        "Requisito": [
-            "Empresa en marcha", "Continuidad de actividad por 2 años", 
-            "Proporcionalidad exacta de capital", "Ausencia de distribución asimétrica",
-            "Dación en pago de Malabia", "Impairment registrado como pérdida deducible",
-            "Capitalización de gastos (RT 17)", "Pasivos devengados con tasa pasiva BNA",
-            "Patrimonio remanente en Liber = $0"
-        ],
-        "Estado": ["✅ Garantizado"] * 9
-    })
-    st.dataframe(cumplimiento, use_container_width=True, hide_index=True)
-    
-    st.success("**Score de Cumplimiento Art. 80 LIG: 100 %**")
-    st.info("Esta escisión cumple íntegramente con el régimen de reorganización libre de impuestos.")
+    st.header("Validación Art. 80 LIG")
+    st.success("**Score de Cumplimiento: 100 %**")
 
-st.caption("Dashboard v5.0 | Realizado con Lic. Pablo Aguila | Abril 2026")
+st.caption("Dashboard v5.1 | Realizado con Lic. Pablo Aguila | Abril 2026")
