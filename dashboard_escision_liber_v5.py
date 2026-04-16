@@ -14,8 +14,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.caption("**Herramienta Directiva, Operativa y Gerencial – Art. 80 LIG**")
-
 # ====================== SIDEBAR ======================
 st.sidebar.header("🔧 Capitalización de Gastos por Sociedad (RT 17)")
 mejoras_pama = st.sidebar.slider("PAMA - Activación de Gastos / Mejoras", 0, 12_000_000, 5_982_757, 50_000)
@@ -52,7 +50,7 @@ tasa_trimestral = tasa_bna / 4
 intereses = capital_original * (tasa_trimestral / 100) * trimestres
 pasivo_actualizado = capital_original + intereses
 
-# ====================== CONTENIDO PRINCIPAL ======================
+# ====================== CONTENIDO PRINCIPAL (scroll vertical) ======================
 st.subheader("🗺️ Mapa de Inmuebles por Sociedad")
 col1, col2, col3 = st.columns(3)
 with col1:
