@@ -52,26 +52,50 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 Balance Final", "✅ Validación Art. 80 LIG"
 ])
 
-with tab2:
-    st.header("Gestión Crédito Malabia")
-    impairment = 452000000 - valor_mercado_malabia
-    st.metric("Valor Contable", "$452.000.000")
-    st.metric("Valor Mercado (tasación)", f"${valor_mercado_malabia:,.0f}")
-    st.metric("Impairment (Escudo Fiscal)", f"${impairment:,.0f}")
+# TAB 1: MAPA DE INMUEBLES (detallado)
+with tab1:
+    st.header("🗺️ Mapa de Inmuebles por Sociedad")
+    col_p, col_v, col_n = st.columns(3)
+    
+    with col_p:
+        st.subheader("PAMA (30%)")
+        pama_props = pd.DataFrame({
+            "Unidad": ["Luis María Campos 665 (varios deptos)", "Padre Dutto MDQ", "Sarmiento 944 10A + Cocheras", "J.M. Gutiérrez 2782"],
+            "Valor": [5132031.60, 8368470.26, 9153094.63, 972039.03]
+        })
+        st.dataframe(pama_props, use_container_width=True, hide_index=True)
+        st.metric("Total PAMA", "$249.648.110")
+    
+    with col_v:
+        st.subheader("VIFRAN (40%)")
+        vifran_props = pd.DataFrame({
+            "Unidad": ["Luis María Campos 665 (Depto 8A)", "Av. del Libertador 5691", "Migueletes 1973"],
+            "Valor": [700736.46, 9309356.38, 40520962.89]
+        })
+        st.dataframe(vifran_props, use_container_width=True, hide_index=True)
+        st.metric("Total VIFRAN", "$276.553.519")
+    
+    with col_n:
+        st.subheader("NBR (30%)")
+        nbr_props = pd.DataFrame({
+            "Unidad": ["Moreno 1969 (Garaje)", "Torre LIBER MDQ", "Luis María Campos 665 (varios deptos)"],
+            "Valor": [29947946.09, 13718887.74, 2608783.80]
+        })
+        st.dataframe(nbr_props, use_container_width=True, hide_index=True)
+        st.metric("Total NBR", "$46.275.618")
 
-with tab3:
-    st.header("Pasivos José y Luis - Tasa Pasiva BNA")
-    st.metric("Pasivo Actualizado (trimestral)", f"${pasivo_actualizado:,.0f}", f"+${intereses:,.0f}")
-
+# TAB 4: BALANCE FINAL (con compensación clara)
 with tab4:
     st.subheader("Estado de Situación Post-Escisión")
     data = {
         "Sociedad": ["PAMA (30%)", "NBR (30%)", "VIFRAN (40%)", "LIBER S.A. (Remanente)"],
+        "Inmuebles Base": [23625635.52, 46275617.63, 50531055.73, 0],
+        "Activación Gastos (RT 17)": [mejoras_pama, mejoras_nbr, mejoras_vifran, 0],
         "Patrimonio Neto Final": [pn["PAMA"], pn["NBR"], pn["VIFRAN"], 0],
         "% Participación": [30.0, 30.0, 40.0, 0.0]
     }
     df_final = pd.DataFrame(data).round(0)
-    st.dataframe(df_final, use_container_width=True)
+    st.dataframe(df_final, use_container_width=True, hide_index=True)
     
     st.success("✅ **Patrimonio Neto remanente en Liber S.A. = $0.00**")
     st.info("**No quedan acciones representativas**")
@@ -80,4 +104,4 @@ with tab5:
     st.header("Validación Art. 80 LIG")
     st.success("**Score de Cumplimiento: 100 %**")
 
-st.caption("Dashboard v5.1 | Realizado con Lic. Pablo Aguila | Abril 2026")
+st.caption("Dashboard v5.2 | Realizado con Lic. Pablo Aguila | Abril 2026")
