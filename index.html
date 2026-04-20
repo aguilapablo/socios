@@ -1,1 +1,2376 @@
-1
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Loma Verde SRL · Tablero · Vic</title>
+<meta name="description" content="Tablero operativo diario · cockpit de ejecución para Vic · Loma Verde SRL." />
+<meta name="theme-color" content="#566b34" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Loma Verde SRL · Tablero operativo" />
+<meta property="og:description" content="Cockpit diario de ejecución · 180 días · documento operativo v1.0" />
+<meta property="og:image" content="https://aguilapablo.github.io/loma2026/blueprint-og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://aguilapablo.github.io/loma2026/tablero.html" />
+<meta property="og:locale" content="es_AR" />
+<meta property="og:site_name" content="Loma Verde SRL" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Loma Verde SRL · Tablero" />
+<meta name="twitter:image" content="https://aguilapablo.github.io/loma2026/blueprint-og.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #faf8f3;
+    --bg-panel: #f4f1e8;
+    --bg-card: #ede9dc;
+    --bg-elevated: #e7e2d0;
+    --bg-hover: rgba(86, 107, 52, 0.04);
+    --line: #d5cfb8;
+    --line-soft: #e2ddc9;
+    --ink: #1f2a1e;
+    --ink-soft: #4a5a43;
+    --ink-faded: #7a8574;
+    --mute: #a8b09f;
+    --accent: #566b34;
+    --accent-bright: #6a8240;
+    --accent-2: #8ba157;
+    --accent-warm: #c47d3a;
+    --accent-danger: #a84f2a;
+    --accent-dark: #3a4a22;
+    --grid: rgba(86, 107, 52, 0.05);
+    --sidebar-w: 260px;
+    --done: #8ba157;
+    --current: #c47d3a;
+    --future: #d5cfb8;
+
+```
+/* Colores por bloque (para dots) */
+--b1: #c47d3a;
+--b2: #d4a04c;
+--b3: #8ba157;
+--b4: #5a9b8a;
+--b5: #6681a8;
+--b6: #8a6b9e;
+```
+
+}
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body {
+  background: var(–bg-main);
+  color: var(–ink);
+  font-family: ‘Fraunces’, Georgia, serif;
+  font-optical-sizing: auto;
+  font-variation-settings: “opsz” 14;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  }
+
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(var(–grid) 1px, transparent 1px),
+linear-gradient(90deg, var(–grid) 1px, transparent 1px);
+background-size: 60px 60px;
+pointer-events: none;
+z-index: 0;
+mask-image: radial-gradient(ellipse 100% 80% at 50% 0%, black 30%, transparent 90%);
+opacity: 0.4;
+}
+
+a { color: var(–accent); text-decoration: none; transition: all 0.2s; }
+a:hover { color: var(–accent-bright); text-decoration: underline; text-underline-offset: 3px; }
+
+.app {
+display: grid;
+grid-template-columns: var(–sidebar-w) 1fr;
+min-height: 100vh;
+position: relative;
+z-index: 1;
+}
+
+/* ═══════════════════════════════════════
+SIDEBAR
+═══════════════════════════════════════ */
+aside.toc {
+position: sticky;
+top: 0;
+height: 100vh;
+border-right: 1px solid var(–line);
+background: var(–bg-panel);
+padding: 22px 18px 20px;
+overflow-y: auto;
+z-index: 10;
+}
+aside.toc::-webkit-scrollbar { width: 5px; }
+aside.toc::-webkit-scrollbar-thumb { background: var(–line); border-radius: 3px; }
+
+.toc-brand {
+display: flex;
+align-items: center;
+gap: 11px;
+padding-bottom: 16px;
+border-bottom: 1px solid var(–line);
+margin-bottom: 18px;
+}
+.toc-logo {
+width: 34px;
+height: 34px;
+display: grid;
+place-items: center;
+border: 1px solid var(–accent);
+border-radius: 50%;
+color: var(–accent);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.1em;
+position: relative;
+flex-shrink: 0;
+background: var(–bg-main);
+}
+.toc-logo::after {
+content: ‘’;
+position: absolute;
+inset: 2px;
+border-radius: 50%;
+border: 1px dashed rgba(86, 107, 52, 0.4);
+}
+.toc-brand h1 {
+font-weight: 500;
+font-size: 13px;
+letter-spacing: -0.01em;
+line-height: 1.15;
+color: var(–ink);
+}
+.toc-brand p {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 8.5px;
+color: var(–ink-faded);
+letter-spacing: 0.12em;
+margin-top: 2px;
+text-transform: uppercase;
+}
+
+/* Tracker del día actual - mantiene el mismo estilo del blueprint */
+.tracker {
+background: var(–bg-card);
+border: 1px solid var(–line);
+padding: 12px 13px 14px;
+margin-bottom: 18px;
+position: relative;
+}
+.tracker::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0;
+width: 28px;
+height: 1px;
+background: var(–current);
+}
+.tracker-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 8.5px;
+letter-spacing: 0.2em;
+color: var(–ink-faded);
+text-transform: uppercase;
+margin-bottom: 5px;
+}
+.tracker-day {
+font-family: ‘Fraunces’, serif;
+font-variation-settings: “opsz” 36;
+font-weight: 400;
+font-style: italic;
+font-size: 20px;
+color: var(–current);
+line-height: 1.1;
+}
+.tracker-day small {
+font-size: 11px;
+color: var(–ink-faded);
+font-style: normal;
+font-family: ‘JetBrains Mono’, monospace;
+letter-spacing: 0.08em;
+}
+.tracker-bar {
+margin-top: 10px;
+height: 4px;
+background: var(–bg-main);
+border-radius: 2px;
+overflow: hidden;
+position: relative;
+}
+.tracker-fill {
+position: absolute;
+left: 0; top: 0;
+height: 100%;
+background: linear-gradient(90deg, var(–accent-2), var(–accent-warm));
+transition: width 0.6s ease;
+border-radius: 2px;
+}
+.tracker-pct {
+margin-top: 7px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9.5px;
+color: var(–ink-soft);
+display: flex;
+justify-content: space-between;
+letter-spacing: 0.05em;
+}
+.tracker-config {
+margin-top: 9px;
+padding-top: 9px;
+border-top: 1px dashed var(–line-soft);
+}
+.tracker-config label {
+display: block;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 8.5px;
+letter-spacing: 0.1em;
+color: var(–ink-faded);
+margin-bottom: 3px;
+}
+.tracker-config input {
+width: 100%;
+padding: 5px 7px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10.5px;
+background: var(–bg-main);
+border: 1px solid var(–line);
+color: var(–ink);
+border-radius: 0;
+}
+.tracker-config input:focus { border-color: var(–accent); outline: none; }
+
+/* Secciones del sidebar */
+.toc-section { margin-bottom: 18px; }
+.toc-section-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 8.5px;
+letter-spacing: 0.2em;
+color: var(–ink-faded);
+text-transform: uppercase;
+margin-bottom: 9px;
+padding: 0 6px;
+}
+.toc-link {
+display: flex;
+align-items: center;
+gap: 9px;
+padding: 5px 7px;
+font-size: 12.5px;
+color: var(–ink-soft);
+border-left: 1px solid transparent;
+transition: all 0.2s;
+border-radius: 1px;
+}
+.toc-link:hover {
+color: var(–ink);
+background: var(–bg-hover);
+text-decoration: none;
+}
+.toc-link.active {
+color: var(–accent);
+border-left-color: var(–accent);
+background: rgba(86, 107, 52, 0.06);
+}
+.toc-icon {
+width: 14px;
+height: 14px;
+display: grid;
+place-items: center;
+color: var(–ink-faded);
+flex-shrink: 0;
+}
+.toc-link.active .toc-icon { color: var(–accent); }
+
+/* Bloques con dots de estado y % */
+.block-item {
+display: flex;
+align-items: center;
+gap: 9px;
+padding: 6px 7px;
+font-size: 12px;
+color: var(–ink-soft);
+border-left: 1px solid transparent;
+transition: all 0.2s;
+}
+.block-item:hover {
+color: var(–ink);
+background: var(–bg-hover);
+}
+.block-item.current {
+border-left-color: var(–current);
+background: rgba(196, 125, 58, 0.05);
+}
+.block-item.past {
+color: var(–ink-faded);
+}
+.block-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+flex-shrink: 0;
+background: var(–future);
+}
+.block-item[data-b=“1”] .block-dot { background: var(–b1); }
+.block-item[data-b=“2”] .block-dot { background: var(–b2); }
+.block-item[data-b=“3”] .block-dot { background: var(–b3); }
+.block-item[data-b=“4”] .block-dot { background: var(–b4); }
+.block-item[data-b=“5”] .block-dot { background: var(–b5); }
+.block-item[data-b=“6”] .block-dot { background: var(–b6); }
+.block-item.future .block-dot { opacity: 0.35; }
+.block-title {
+flex: 1;
+font-size: 12px;
+line-height: 1.25;
+}
+.block-pct {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9px;
+color: var(–ink-faded);
+letter-spacing: 0.02em;
+}
+.block-item.current .block-pct { color: var(–current); font-weight: 500; }
+.block-item.past .block-pct { color: var(–done); }
+
+.toc-foot {
+margin-top: 20px;
+padding-top: 14px;
+border-top: 1px solid var(–line);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 8.5px;
+color: var(–ink-faded);
+letter-spacing: 0.1em;
+line-height: 1.7;
+}
+.toc-foot strong { color: var(–ink-soft); }
+
+/* ═══════════════════════════════════════
+MAIN
+═══════════════════════════════════════ */
+main {
+padding: 34px 48px 80px;
+max-width: 1400px;
+}
+
+/* Header */
+.header {
+display: grid;
+grid-template-columns: 1fr auto;
+align-items: start;
+gap: 24px;
+padding-bottom: 26px;
+border-bottom: 1px solid var(–line);
+margin-bottom: 30px;
+}
+.header-bullet {
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: var(–current);
+display: inline-block;
+margin-right: 14px;
+vertical-align: middle;
+margin-bottom: 12px;
+}
+.header h1 {
+font-family: ‘Fraunces’, serif;
+font-variation-settings: “opsz” 144;
+font-weight: 300;
+font-size: clamp(32px, 3.5vw, 46px);
+line-height: 1;
+letter-spacing: -0.03em;
+color: var(–ink);
+display: flex;
+align-items: center;
+}
+.header-saludo {
+display: inline-flex;
+align-items: center;
+}
+.header-name {
+font-style: italic;
+color: var(–accent);
+font-weight: 400;
+}
+.header-meta {
+margin-top: 14px;
+display: flex;
+align-items: center;
+gap: 18px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px;
+letter-spacing: 0.08em;
+color: var(–ink-faded);
+flex-wrap: wrap;
+}
+.next-badge {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 5px 11px;
+background: var(–bg-panel);
+border: 1px solid var(–line);
+border-radius: 2px;
+font-size: 10.5px;
+color: var(–ink-soft);
+text-transform: uppercase;
+letter-spacing: 0.1em;
+}
+.next-badge strong {
+color: var(–current);
+font-weight: 500;
+}
+.header-right {
+text-align: right;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px;
+letter-spacing: 0.12em;
+color: var(–ink-faded);
+text-transform: uppercase;
+line-height: 1.8;
+padding-top: 8px;
+}
+.header-right strong {
+color: var(–ink-soft);
+font-weight: 500;
+}
+.header-date {
+font-family: ‘Fraunces’, serif;
+font-style: italic;
+font-size: 17px;
+color: var(–ink);
+letter-spacing: -0.01em;
+margin-bottom: 3px;
+text-transform: none;
+}
+
+/* ═══════════════════════════════════════
+BANNER DE ALERTA / ESTADO
+═══════════════════════════════════════ */
+.banner {
+display: grid;
+grid-template-columns: auto 1fr;
+gap: 16px;
+padding: 20px 24px;
+margin-bottom: 26px;
+background: var(–bg-panel);
+border-left: 3px solid var(–mute);
+border-top: 1px solid var(–line);
+border-right: 1px solid var(–line);
+border-bottom: 1px solid var(–line);
+align-items: start;
+}
+.banner.alert {
+border-left-color: var(–accent-warm);
+background: linear-gradient(90deg, rgba(196, 125, 58, 0.06), var(–bg-panel) 30%);
+}
+.banner.ok {
+border-left-color: var(–accent);
+background: linear-gradient(90deg, rgba(86, 107, 52, 0.05), var(–bg-panel) 30%);
+}
+.banner-icon {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(–mute);
+margin-top: 8px;
+flex-shrink: 0;
+}
+.banner.alert .banner-icon { background: var(–accent-warm); box-shadow: 0 0 0 4px rgba(196, 125, 58, 0.15); }
+.banner.ok .banner-icon { background: var(–accent); box-shadow: 0 0 0 4px rgba(86, 107, 52, 0.12); }
+
+.banner-content h3 {
+font-family: ‘Fraunces’, serif;
+font-variation-settings: “opsz” 32;
+font-weight: 400;
+font-style: italic;
+font-size: 20px;
+color: var(–ink);
+margin-bottom: 6px;
+line-height: 1.25;
+}
+.banner-content p {
+font-size: 13.5px;
+color: var(–ink-soft);
+line-height: 1.55;
+margin-bottom: 10px;
+}
+.banner-chips {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+margin-top: 6px;
+}
+.banner-chip {
+display: inline-flex;
+align-items: center;
+gap: 7px;
+padding: 5px 10px;
+background: var(–bg-main);
+border: 1px solid var(–line);
+border-radius: 2px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+color: var(–ink-soft);
+letter-spacing: 0.04em;
+}
+.banner-chip-dot {
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: var(–current);
+}
+.banner-chip[data-b=“1”] .banner-chip-dot { background: var(–b1); }
+.banner-chip[data-b=“2”] .banner-chip-dot { background: var(–b2); }
+.banner-chip[data-b=“3”] .banner-chip-dot { background: var(–b3); }
+.banner-chip[data-b=“4”] .banner-chip-dot { background: var(–b4); }
+.banner-chip[data-b=“5”] .banner-chip-dot { background: var(–b5); }
+.banner-chip[data-b=“6”] .banner-chip-dot { background: var(–b6); }
+.banner-chip strong {
+color: var(–ink);
+font-weight: 500;
+}
+
+/* ═══════════════════════════════════════
+KPI CARDS
+═══════════════════════════════════════ */
+.kpi-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 16px;
+margin-bottom: 36px;
+}
+.kpi-card {
+background: var(–bg-panel);
+border: 1px solid var(–line);
+padding: 20px 22px 22px;
+position: relative;
+transition: all 0.25s;
+}
+.kpi-card:hover {
+border-color: var(–line);
+background: var(–bg-card);
+}
+.kpi-card-head {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 12px;
+}
+.kpi-card-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.15em;
+color: var(–ink-faded);
+text-transform: uppercase;
+}
+.kpi-card-icon {
+width: 14px;
+height: 14px;
+color: var(–ink-faded);
+opacity: 0.55;
+}
+.kpi-card-value {
+font-family: ‘Fraunces’, serif;
+font-variation-settings: “opsz” 72;
+font-weight: 400;
+font-size: 40px;
+line-height: 1;
+color: var(–ink);
+letter-spacing: -0.025em;
+margin-bottom: 6px;
+font-feature-settings: “tnum”;
+}
+.kpi-card-value.accent { color: var(–accent); }
+.kpi-card-value.warm { color: var(–accent-warm); }
+.kpi-card-value small {
+font-size: 13px;
+color: var(–ink-faded);
+margin-left: 3px;
+font-family: ‘JetBrains Mono’, monospace;
+letter-spacing: 0.05em;
+}
+.kpi-card-note {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10.5px;
+color: var(–ink-soft);
+letter-spacing: 0.02em;
+line-height: 1.5;
+}
+.kpi-card-note .dot {
+display: inline-block;
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: var(–accent-warm);
+margin-right: 6px;
+vertical-align: middle;
+}
+
+/* ═══════════════════════════════════════
+SECCIÓN: ESTA SEMANA
+═══════════════════════════════════════ */
+.section-title {
+display: flex;
+align-items: baseline;
+justify-content: space-between;
+margin-bottom: 18px;
+gap: 20px;
+}
+.section-title h2 {
+font-family: ‘Fraunces’, serif;
+font-variation-settings: “opsz” 72;
+font-weight: 400;
+font-style: italic;
+font-size: 30px;
+color: var(–ink);
+letter-spacing: -0.02em;
+}
+.section-title-meta {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10.5px;
+color: var(–ink-faded);
+letter-spacing: 0.12em;
+text-transform: uppercase;
+white-space: nowrap;
+}
+
+.week-grid {
+display: grid;
+grid-template-columns: 60px repeat(5, 1fr);
+gap: 1px;
+background: var(–line);
+border: 1px solid var(–line);
+margin-bottom: 40px;
+}
+.week-header {
+background: var(–bg-panel);
+padding: 12px 14px 10px;
+font-family: ‘JetBrains Mono’, monospace;
+}
+.week-header-label {
+font-size: 10px;
+letter-spacing: 0.15em;
+color: var(–ink-faded);
+text-transform: uppercase;
+margin-bottom: 3px;
+}
+.week-header-date {
+font-size: 11px;
+color: var(–ink-soft);
+letter-spacing: 0.05em;
+}
+.week-header.cw {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+color: var(–ink-faded);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-start;
+padding-top: 12px;
+letter-spacing: 0.12em;
+}
+.week-header.cw strong {
+font-size: 20px;
+color: var(–ink-soft);
+font-weight: 500;
+margin-top: 4px;
+font-family: ‘Fraunces’, serif;
+font-style: italic;
+}
+.week-hour {
+background: var(–bg-panel);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9.5px;
+color: var(–ink-faded);
+letter-spacing: 0.08em;
+padding: 8px 6px 0;
+display: flex;
+justify-content: flex-end;
+align-items: flex-start;
+min-height: 70px;
+}
+.week-day {
+background: var(–bg-main);
+position: relative;
+min-height: 70px;
+padding: 6px 8px;
+}
+.week-event {
+background: var(–bg-card);
+border-left: 2px solid var(–accent);
+padding: 7px 9px 8px;
+margin-bottom: 5px;
+font-size: 11.5px;
+line-height: 1.3;
+position: relative;
+}
+.week-event-head {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+gap: 6px;
+margin-bottom: 3px;
+}
+.week-event-code {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9.5px;
+letter-spacing: 0.1em;
+color: var(–ink-faded);
+text-transform: uppercase;
+font-weight: 500;
+}
+.week-event-time {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9.5px;
+color: var(–ink-faded);
+letter-spacing: 0.02em;
+}
+.week-event-title {
+color: var(–ink);
+font-weight: 400;
+font-size: 11.5px;
+line-height: 1.3;
+}
+.week-event.inv { border-left-color: var(–b3); }
+.week-event.reg { border-left-color: var(–b1); }
+.week-event.op { border-left-color: var(–accent); }
+.week-event.rev { border-left-color: var(–b5); }
+.week-event.per { border-left-color: var(–b6); }
+
+/* ═══════════════════════════════════════
+SECCIÓN: PIPELINES
+═══════════════════════════════════════ */
+.pipe-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 16px;
+margin-bottom: 36px;
+}
+.pipe-card {
+background: var(–bg-panel);
+border: 1px solid var(–line);
+padding: 20px 22px 20px;
+position: relative;
+}
+.pipe-card::before {
+content: ‘’;
+position: absolute;
+top: 0;
+left: 0;
+width: 30px;
+height: 2px;
+background: var(–accent);
+}
+.pipe-card.warm::before { background: var(–accent-warm); }
+.pipe-card.reg::before { background: var(–b1); }
+.pipe-title {
+font-family: ‘Fraunces’, serif;
+font-style: italic;
+font-size: 18px;
+color: var(–ink);
+margin-bottom: 2px;
+font-variation-settings: “opsz” 32;
+}
+.pipe-sub {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9.5px;
+letter-spacing: 0.12em;
+color: var(–ink-faded);
+text-transform: uppercase;
+margin-bottom: 18px;
+}
+.pipe-rows {
+display: flex;
+flex-direction: column;
+gap: 9px;
+}
+.pipe-row {
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 10px;
+align-items: center;
+padding: 7px 0;
+border-bottom: 1px dashed var(–line-soft);
+}
+.pipe-row:last-child { border-bottom: none; }
+.pipe-row-label {
+font-size: 12.5px;
+color: var(–ink-soft);
+}
+.pipe-row-value {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 13px;
+font-weight: 500;
+color: var(–ink);
+min-width: 40px;
+text-align: right;
+padding: 3px 8px;
+border: 1px solid transparent;
+cursor: pointer;
+transition: all 0.2s;
+border-radius: 2px;
+}
+.pipe-row-value:hover {
+border-color: var(–line);
+background: var(–bg-main);
+}
+.pipe-row-value.editing {
+background: var(–bg-main);
+border-color: var(–accent);
+outline: none;
+}
+.pipe-row-value.hi { color: var(–accent); }
+.pipe-row-value.warn { color: var(–accent-warm); }
+
+/* ═══════════════════════════════════════
+SECCIÓN: HITOS DEL BLOQUE ACTUAL
+═══════════════════════════════════════ */
+.current-block-panel {
+background: var(–bg-panel);
+border: 1px solid var(–line);
+padding: 24px 28px 28px;
+margin-bottom: 36px;
+position: relative;
+}
+.current-block-panel::before {
+content: ‘’;
+position: absolute;
+top: 0;
+left: 0;
+width: 50px;
+height: 2px;
+background: var(–current);
+}
+.current-block-head {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+margin-bottom: 18px;
+padding-bottom: 14px;
+border-bottom: 1px dashed var(–line-soft);
+gap: 20px;
+flex-wrap: wrap;
+}
+.current-block-title {
+font-family: ‘Fraunces’, serif;
+font-style: italic;
+font-size: 24px;
+color: var(–ink);
+font-variation-settings: “opsz” 36;
+letter-spacing: -0.01em;
+}
+.current-block-meta {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10.5px;
+letter-spacing: 0.12em;
+color: var(–ink-faded);
+text-transform: uppercase;
+display: flex;
+gap: 14px;
+align-items: center;
+}
+.current-block-meta strong {
+color: var(–current);
+font-weight: 500;
+}
+
+.kpi-list-compact .kpi-item {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+padding: 10px 0;
+border-bottom: 1px dashed var(–line-soft);
+cursor: pointer;
+transition: all 0.2s;
+}
+.kpi-list-compact .kpi-item:last-child { border-bottom: none; }
+.kpi-list-compact .kpi-item:hover {
+padding-left: 6px;
+}
+.kpi-check {
+width: 18px;
+height: 18px;
+border: 2px solid var(–line);
+border-radius: 2px;
+flex-shrink: 0;
+margin-top: 1px;
+display: grid;
+place-items: center;
+background: var(–bg-main);
+transition: all 0.2s;
+}
+.kpi-check::after {
+content: ‘’;
+width: 8px;
+height: 5px;
+border-left: 2px solid var(–bg-main);
+border-bottom: 2px solid var(–bg-main);
+transform: translateY(-1px) rotate(-45deg);
+opacity: 0;
+transition: opacity 0.2s;
+}
+.kpi-item.done .kpi-check {
+background: var(–accent);
+border-color: var(–accent);
+}
+.kpi-item.done .kpi-check::after { opacity: 1; }
+.kpi-text {
+font-size: 13.5px;
+color: var(–ink);
+line-height: 1.5;
+flex: 1;
+}
+.kpi-item.done .kpi-text {
+color: var(–ink-faded);
+text-decoration: line-through;
+text-decoration-color: var(–ink-faded);
+}
+
+.empty-state {
+padding: 30px 20px;
+text-align: center;
+color: var(–ink-faded);
+font-style: italic;
+font-size: 14px;
+}
+
+/* ═══════════════════════════════════════
+QUICK ACTIONS
+═══════════════════════════════════════ */
+.quick-actions {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 12px;
+margin-bottom: 36px;
+}
+.qa-btn {
+background: var(–bg-main);
+border: 1px solid var(–line);
+padding: 14px 16px;
+text-align: left;
+cursor: pointer;
+transition: all 0.25s;
+font-family: inherit;
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+.qa-btn:hover {
+background: var(–bg-panel);
+border-color: var(–accent);
+transform: translateY(-1px);
+}
+.qa-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9.5px;
+letter-spacing: 0.15em;
+color: var(–ink-faded);
+text-transform: uppercase;
+}
+.qa-title {
+font-family: ‘Fraunces’, serif;
+font-style: italic;
+font-size: 15px;
+color: var(–ink);
+}
+
+/* Mini chart de avance por bloque */
+.progress-chart {
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 12px;
+margin-top: 20px;
+padding-top: 18px;
+border-top: 1px dashed var(–line-soft);
+}
+.pc-col {
+text-align: center;
+}
+.pc-bar-wrap {
+height: 60px;
+background: var(–bg-main);
+border: 1px solid var(–line);
+position: relative;
+margin-bottom: 8px;
+display: flex;
+flex-direction: column-reverse;
+}
+.pc-bar {
+width: 100%;
+background: var(–future);
+transition: height 0.5s ease, background-color 0.3s;
+}
+.pc-col[data-b=“1”] .pc-bar { background: var(–b1); opacity: 0.7; }
+.pc-col[data-b=“2”] .pc-bar { background: var(–b2); opacity: 0.7; }
+.pc-col[data-b=“3”] .pc-bar { background: var(–b3); opacity: 0.7; }
+.pc-col[data-b=“4”] .pc-bar { background: var(–b4); opacity: 0.7; }
+.pc-col[data-b=“5”] .pc-bar { background: var(–b5); opacity: 0.7; }
+.pc-col[data-b=“6”] .pc-bar { background: var(–b6); opacity: 0.7; }
+.pc-col.current .pc-bar { opacity: 1; }
+.pc-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9px;
+letter-spacing: 0.1em;
+color: var(–ink-faded);
+text-transform: uppercase;
+}
+.pc-label strong {
+color: var(–ink-soft);
+font-weight: 500;
+display: block;
+margin-top: 2px;
+}
+.pc-col.current .pc-label strong { color: var(–current); }
+
+/* ═══════════════════════════════════════
+GATE
+═══════════════════════════════════════ */
+body.locked { overflow: hidden; }
+body.locked .app { display: none; }
+
+#gate {
+position: fixed;
+inset: 0;
+z-index: 9999;
+background: var(–bg-main);
+display: none;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 40px 20px;
+overflow-y: auto;
+}
+body.locked #gate { display: flex; }
+#gate::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(var(–grid) 1px, transparent 1px),
+linear-gradient(90deg, var(–grid) 1px, transparent 1px);
+background-size: 60px 60px;
+pointer-events: none;
+z-index: 0;
+mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 10%, transparent 80%);
+opacity: 0.5;
+}
+.gate-inner {
+position: relative;
+z-index: 1;
+max-width: 520px;
+width: 100%;
+padding: 40px 40px 34px;
+background: var(–bg-panel);
+border: 1px solid var(–line);
+box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+}
+.gate-inner::before {
+content: ‘’;
+position: absolute;
+top: 0;
+left: 0;
+width: 60px;
+height: 1px;
+background: var(–current);
+}
+.gate-logo {
+width: 52px;
+height: 52px;
+display: grid;
+place-items: center;
+border: 1px solid var(–current);
+border-radius: 50%;
+color: var(–current);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 13px;
+letter-spacing: 0.1em;
+position: relative;
+margin-bottom: 20px;
+background: var(–bg-main);
+}
+.gate-logo::after {
+content: ‘’;
+position: absolute;
+inset: 3px;
+border-radius: 50%;
+border: 1px dashed rgba(196, 125, 58, 0.4);
+}
+.gate-eyebrow {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.25em;
+color: var(–current);
+text-transform: uppercase;
+margin-bottom: 12px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.gate-eyebrow::before {
+content: ‘’;
+width: 24px;
+height: 1px;
+background: var(–current);
+}
+.gate-inner h2 {
+font-family: ‘Fraunces’, serif;
+font-variation-settings: “opsz” 96;
+font-weight: 300;
+font-size: 32px;
+line-height: 1.05;
+letter-spacing: -0.03em;
+margin-bottom: 10px;
+color: var(–ink);
+}
+.gate-inner h2 em {
+font-style: italic;
+font-weight: 400;
+color: var(–current);
+}
+.gate-lede {
+color: var(–ink-soft);
+font-size: 14.5px;
+line-height: 1.6;
+margin-bottom: 24px;
+}
+.gate-form { display: flex; flex-direction: column; gap: 12px; }
+.gate-field { display: flex; flex-direction: column; gap: 5px; }
+.gate-field label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.15em;
+color: var(–ink-faded);
+text-transform: uppercase;
+}
+.gate-field input {
+background: var(–bg-main);
+border: 1px solid var(–line);
+color: var(–ink);
+padding: 11px 13px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 13.5px;
+outline: none;
+border-radius: 0;
+transition: all 0.2s;
+}
+.gate-field input:focus {
+border-color: var(–current);
+}
+.gate-submit {
+margin-top: 10px;
+background: var(–current);
+color: var(–bg-main);
+border: none;
+padding: 13px 18px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 11.5px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.25s;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+}
+.gate-submit:hover {
+background: var(–accent-danger);
+transform: translateY(-1px);
+}
+.gate-submit:disabled {
+background: var(–line);
+color: var(–mute);
+cursor: not-allowed;
+transform: none;
+}
+.gate-error {
+margin-top: 10px;
+padding: 9px 13px;
+background: rgba(168, 79, 42, 0.08);
+border-left: 2px solid var(–accent-danger);
+color: var(–accent-danger);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10.5px;
+letter-spacing: 0.08em;
+display: none;
+}
+.gate-error.show { display: block; }
+.gate-foot {
+margin-top: 26px;
+padding-top: 18px;
+border-top: 1px solid var(–line);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9px;
+color: var(–ink-faded);
+letter-spacing: 0.12em;
+line-height: 1.7;
+text-transform: uppercase;
+text-align: center;
+}
+
+/* ═══════════════════════════════════════
+RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 1100px) {
+.app { grid-template-columns: 1fr; }
+aside.toc {
+position: relative;
+height: auto;
+border-right: none;
+border-bottom: 1px solid var(–line);
+}
+main { padding: 26px 22px 60px; }
+.kpi-grid { grid-template-columns: repeat(2, 1fr); }
+.pipe-grid { grid-template-columns: 1fr; }
+.quick-actions { grid-template-columns: repeat(2, 1fr); }
+.week-grid { overflow-x: auto; }
+}
+
+@media (max-width: 640px) {
+.kpi-grid { grid-template-columns: 1fr; }
+.quick-actions { grid-template-columns: 1fr; }
+.header { grid-template-columns: 1fr; }
+.header-right { text-align: left; }
+.gate-inner { padding: 28px 22px; }
+.gate-inner h2 { font-size: 26px; }
+}
+</style>
+
+</head>
+<body class="locked">
+
+<!-- GATE -->
+
+<div id="gate">
+  <div class="gate-inner">
+    <div class="gate-logo">LV</div>
+    <div class="gate-eyebrow">Tablero operativo · v1.0</div>
+    <h2>Tu <em>cockpit</em> diario.</h2>
+    <p class="gate-lede">Vista de una sola pantalla. Dónde estás hoy, qué hitos del bloque actual te esperan, pipelines vivos, y la semana a la vista. Sincronizado con tu blueprint.</p>
+    <form class="gate-form" id="gateForm" autocomplete="off">
+      <div class="gate-field">
+        <label for="gate-key">Clave de acceso</label>
+        <input type="password" id="gate-key" placeholder="Clave Loma Verde" required />
+      </div>
+      <button type="submit" class="gate-submit" id="gateSubmit" disabled>
+        <span>Abrir tablero</span>
+        <span>→</span>
+      </button>
+      <div class="gate-error" id="gateError">Clave incorrecta · intentá de nuevo</div>
+    </form>
+    <div class="gate-foot">
+      Confidencial · Vic solamente
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+
+<aside class="toc" role="navigation" aria-label="Navegación del tablero">
+  <div class="toc-brand">
+    <div class="toc-logo">LV</div>
+    <div>
+      <h1>Loma Verde SRL</h1>
+      <p>Tablero · v1.0</p>
+    </div>
+  </div>
+
+  <!-- Tracker del día actual -->
+
+  <div class="tracker" id="tracker">
+    <div class="tracker-label">Día actual</div>
+    <div class="tracker-day" id="trackerDay">— <small>de 180</small></div>
+    <div class="tracker-bar"><div class="tracker-fill" id="trackerFill" style="width:0%"></div></div>
+    <div class="tracker-pct">
+      <span id="trackerBloque">Bloque —</span>
+      <span id="trackerPct">—%</span>
+    </div>
+    <div class="tracker-config">
+      <label for="startDate">Fecha arranque</label>
+      <input type="date" id="startDate" />
+    </div>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Workspace</div>
+    <a href="#" class="toc-link active">
+      <span class="toc-icon">▦</span>
+      <span>Tablero</span>
+    </a>
+    <a href="index.html" class="toc-link">
+      <span class="toc-icon">☰</span>
+      <span>Masterplan v1.3</span>
+    </a>
+    <a href="blueprint-180.html" class="toc-link">
+      <span class="toc-icon">◈</span>
+      <span>Blueprint 180 días</span>
+    </a>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Bloques</div>
+    <a href="blueprint-180.html#b1" class="block-item" data-b="1" id="blockNav1">
+      <span class="block-dot"></span>
+      <span class="block-title">Fundación</span>
+      <span class="block-pct" id="blockPct1">0/7</span>
+    </a>
+    <a href="blueprint-180.html#b2" class="block-item" data-b="2" id="blockNav2">
+      <span class="block-dot"></span>
+      <span class="block-title">Core team</span>
+      <span class="block-pct" id="blockPct2">0/8</span>
+    </a>
+    <a href="blueprint-180.html#b3" class="block-item" data-b="3" id="blockNav3">
+      <span class="block-dot"></span>
+      <span class="block-title">Contratos + tranche</span>
+      <span class="block-pct" id="blockPct3">0/6</span>
+    </a>
+    <a href="blueprint-180.html#b4" class="block-item" data-b="4" id="blockNav4">
+      <span class="block-dot"></span>
+      <span class="block-title">Operación asistida</span>
+      <span class="block-pct" id="blockPct4">0/7</span>
+    </a>
+    <a href="blueprint-180.html#b5" class="block-item" data-b="5" id="blockNav5">
+      <span class="block-dot"></span>
+      <span class="block-title">Escalamiento</span>
+      <span class="block-pct" id="blockPct5">0/5</span>
+    </a>
+    <a href="blueprint-180.html#b6" class="block-item" data-b="6" id="blockNav6">
+      <span class="block-dot"></span>
+      <span class="block-title">Cierre</span>
+      <span class="block-pct" id="blockPct6">0/6</span>
+    </a>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-label">Sistema</div>
+    <a href="#" class="toc-link" id="resetLink">
+      <span class="toc-icon">↺</span>
+      <span>Reset checklists</span>
+    </a>
+  </div>
+
+  <div class="toc-foot">
+    <strong>Versión</strong><br>v1.0 · Abril 2026<br><br>
+    <strong>Confidencial</strong><br>Solo para Vic
+  </div>
+</aside>
+
+<!-- MAIN -->
+
+<main role="main">
+
+  <!-- Header con saludo personalizado -->
+
+  <div class="header">
+    <div>
+      <h1 class="header-saludo">
+        <span class="header-bullet"></span>
+        <span id="saludo">Buenas tardes</span>,&nbsp;<span class="header-name">Vic.</span>
+      </h1>
+      <div class="header-meta">
+        <div class="next-badge">
+          <span>próximo hito</span>
+          <strong id="nextHito">—</strong>
+        </div>
+        <span id="nextCountdown">—</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-date" id="fechaHoy">—</div>
+      <div><strong id="semanaNum">Semana —</strong> · Loma Verde SRL</div>
+    </div>
+  </div>
+
+  <!-- Banner estado -->
+
+  <div class="banner" id="banner">
+    <div class="banner-icon"></div>
+    <div class="banner-content">
+      <h3 id="bannerTitle">Configura tu fecha de arranque.</h3>
+      <p id="bannerText">Todavía no definiste cuándo empezás los 180 días. Andá al tracker del sidebar y seleccionalo. Todos los números de este tablero se van a actualizar al toque.</p>
+      <div class="banner-chips" id="bannerChips"></div>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-card-head">
+        <div class="kpi-card-label">Próximo hito</div>
+        <div class="kpi-card-icon">◇</div>
+      </div>
+      <div class="kpi-card-value warm" id="kpiNextHitoShort">—</div>
+      <div class="kpi-card-note" id="kpiNextHitoNote">definí fecha para ver</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card-head">
+        <div class="kpi-card-label">Hitos del bloque</div>
+        <div class="kpi-card-icon">⚐</div>
+      </div>
+      <div class="kpi-card-value" id="kpiBlockProgress">0</div>
+      <div class="kpi-card-note" id="kpiBlockProgressNote">de — total</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card-head">
+        <div class="kpi-card-label">Avance global</div>
+        <div class="kpi-card-icon">◉</div>
+      </div>
+      <div class="kpi-card-value accent" id="kpiGlobalProgress">0<small>%</small></div>
+      <div class="kpi-card-note" id="kpiGlobalProgressNote">0 de 39 hitos</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card-head">
+        <div class="kpi-card-label">Días restantes</div>
+        <div class="kpi-card-icon">◯</div>
+      </div>
+      <div class="kpi-card-value warm" id="kpiDaysLeft">—</div>
+      <div class="kpi-card-note" id="kpiDaysLeftNote">al día 180</div>
+    </div>
+  </div>
+
+  <!-- Progreso por bloque (mini chart) -->
+
+  <div>
+    <div class="section-title">
+      <h2>Avance por <em>bloque</em></h2>
+      <div class="section-title-meta" id="avanceTotal">— hitos completados</div>
+    </div>
+    <div class="progress-chart" id="progressChart">
+      <div class="pc-col" data-b="1">
+        <div class="pc-bar-wrap"><div class="pc-bar" id="pcBar1" style="height:0%"></div></div>
+        <div class="pc-label">B1<strong id="pcVal1">0%</strong></div>
+      </div>
+      <div class="pc-col" data-b="2">
+        <div class="pc-bar-wrap"><div class="pc-bar" id="pcBar2" style="height:0%"></div></div>
+        <div class="pc-label">B2<strong id="pcVal2">0%</strong></div>
+      </div>
+      <div class="pc-col" data-b="3">
+        <div class="pc-bar-wrap"><div class="pc-bar" id="pcBar3" style="height:0%"></div></div>
+        <div class="pc-label">B3<strong id="pcVal3">0%</strong></div>
+      </div>
+      <div class="pc-col" data-b="4">
+        <div class="pc-bar-wrap"><div class="pc-bar" id="pcBar4" style="height:0%"></div></div>
+        <div class="pc-label">B4<strong id="pcVal4">0%</strong></div>
+      </div>
+      <div class="pc-col" data-b="5">
+        <div class="pc-bar-wrap"><div class="pc-bar" id="pcBar5" style="height:0%"></div></div>
+        <div class="pc-label">B5<strong id="pcVal5">0%</strong></div>
+      </div>
+      <div class="pc-col" data-b="6">
+        <div class="pc-bar-wrap"><div class="pc-bar" id="pcBar6" style="height:0%"></div></div>
+        <div class="pc-label">B6<strong id="pcVal6">0%</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hitos del bloque actual -->
+
+  <div style="margin-top:40px">
+    <div class="current-block-panel">
+      <div class="current-block-head">
+        <div class="current-block-title" id="cbTitle">Bloque actual · — </div>
+        <div class="current-block-meta">
+          <span id="cbMeta">Días — a —</span>
+          <span>•</span>
+          <span><strong id="cbProgress">0/—</strong> completados</span>
+        </div>
+      </div>
+      <div class="kpi-list-compact" id="currentBlockList">
+        <!-- Se llena dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Esta semana -->
+
+  <div class="section-title">
+    <h2>Esta <em>semana</em></h2>
+    <div class="section-title-meta" id="weekRange">Mon — · Fri —</div>
+  </div>
+
+  <div class="week-grid" id="weekGrid">
+    <div class="week-header cw"><span id="cwLabel">CW —</span><strong id="cwNum">—</strong></div>
+    <div class="week-header">
+      <div class="week-header-label">Mon</div>
+      <div class="week-header-date" id="dateMon">—</div>
+    </div>
+    <div class="week-header">
+      <div class="week-header-label">Tue</div>
+      <div class="week-header-date" id="dateTue">—</div>
+    </div>
+    <div class="week-header">
+      <div class="week-header-label">Wed</div>
+      <div class="week-header-date" id="dateWed">—</div>
+    </div>
+    <div class="week-header">
+      <div class="week-header-label">Thu</div>
+      <div class="week-header-date" id="dateThu">—</div>
+    </div>
+    <div class="week-header">
+      <div class="week-header-label">Fri</div>
+      <div class="week-header-date" id="dateFri">—</div>
+    </div>
+
+```
+<div class="week-hour">7:30</div>
+<div class="week-day" id="dayMon">
+  <div class="week-event per">
+    <div class="week-event-head">
+      <span class="week-event-code">PER</span>
+      <span class="week-event-time">7:30–7:45</span>
+    </div>
+    <div class="week-event-title">Daily review · 3 prioridades</div>
+  </div>
+</div>
+<div class="week-day" id="dayTue">
+  <div class="week-event per">
+    <div class="week-event-head">
+      <span class="week-event-code">PER</span>
+      <span class="week-event-time">7:30–7:45</span>
+    </div>
+    <div class="week-event-title">Daily review</div>
+  </div>
+</div>
+<div class="week-day" id="dayWed">
+  <div class="week-event per">
+    <div class="week-event-head">
+      <span class="week-event-code">PER</span>
+      <span class="week-event-time">7:30–7:45</span>
+    </div>
+    <div class="week-event-title">Daily review</div>
+  </div>
+</div>
+<div class="week-day" id="dayThu">
+  <div class="week-event per">
+    <div class="week-event-head">
+      <span class="week-event-code">PER</span>
+      <span class="week-event-time">7:30–7:45</span>
+    </div>
+    <div class="week-event-title">Daily review</div>
+  </div>
+</div>
+<div class="week-day" id="dayFri">
+  <div class="week-event rev">
+    <div class="week-event-head">
+      <span class="week-event-code">REV</span>
+      <span class="week-event-time">9:00–10:00</span>
+    </div>
+    <div class="week-event-title">Weekly review · 5 KPIs + próxima semana</div>
+  </div>
+</div>
+
+<div class="week-hour">10:00</div>
+<div class="week-day"><!-- Lunes dinámico --></div>
+<div class="week-day"><!-- Martes dinámico --></div>
+<div class="week-day"><!-- Miércoles dinámico --></div>
+<div class="week-day"><!-- Jueves dinámico --></div>
+<div class="week-day"><!-- Viernes dinámico --></div>
+
+<div class="week-hour">14:00</div>
+<div class="week-day" id="dayMonPM"></div>
+<div class="week-day" id="dayTuePM"></div>
+<div class="week-day" id="dayWedPM"></div>
+<div class="week-day" id="dayThuPM"></div>
+<div class="week-day" id="dayFriPM"></div>
+```
+
+  </div>
+
+  <!-- Quick actions -->
+
+  <div class="section-title" style="margin-top:10px">
+    <h2>Acciones <em>rápidas</em></h2>
+    <div class="section-title-meta">atajos frecuentes</div>
+  </div>
+  <div class="quick-actions">
+    <a href="blueprint-180.html#dia1" class="qa-btn">
+      <span class="qa-label">Día 1</span>
+      <span class="qa-title">Qué hacer esta semana</span>
+    </a>
+    <a href="blueprint-180.html#seguimiento" class="qa-btn">
+      <span class="qa-label">Sistema</span>
+      <span class="qa-title">Cadencia diaria y semanal</span>
+    </a>
+    <a href="blueprint-180.html#inversores" class="qa-btn">
+      <span class="qa-label">Pipeline</span>
+      <span class="qa-title">Captación de inversores</span>
+    </a>
+    <a href="index.html#fondeo" class="qa-btn">
+      <span class="qa-label">Masterplan</span>
+      <span class="qa-title">Estructura de fondeo</span>
+    </a>
+  </div>
+
+  <!-- Pipelines editables -->
+
+  <div class="section-title" style="margin-top:10px">
+    <h2>Pipelines <em>vivos</em></h2>
+    <div class="section-title-meta">click en los números para editar</div>
+  </div>
+  <div class="pipe-grid">
+    <div class="pipe-card">
+      <div class="pipe-title">Inversores</div>
+      <div class="pipe-sub">Embudo · mutuo USD 160k</div>
+      <div class="pipe-rows">
+        <div class="pipe-row">
+          <span class="pipe-row-label">Reuniones completadas</span>
+          <span class="pipe-row-value" data-pipe="inv-meetings" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">Warm · interesados</span>
+          <span class="pipe-row-value" data-pipe="inv-warm" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">Soft commits</span>
+          <span class="pipe-row-value warn" data-pipe="inv-soft" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">Hard commits · firmados</span>
+          <span class="pipe-row-value hi" data-pipe="inv-hard" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">USD comprometidos</span>
+          <span class="pipe-row-value hi" data-pipe="inv-usd" data-default="0" data-unit="$">$0</span>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-card warm">
+      <div class="pipe-title">Hiring</div>
+      <div class="pipe-sub">Equipo · target día 180</div>
+      <div class="pipe-rows">
+        <div class="pipe-row">
+          <span class="pipe-row-label">Roles abiertos</span>
+          <span class="pipe-row-value warn" data-pipe="hire-open" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">En entrevistas</span>
+          <span class="pipe-row-value" data-pipe="hire-int" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">Trials activos</span>
+          <span class="pipe-row-value" data-pipe="hire-trial" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">Altas efectivas</span>
+          <span class="pipe-row-value hi" data-pipe="hire-done" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">Meta al día 180</span>
+          <span class="pipe-row-value" data-pipe="hire-target" data-default="9">9</span>
+        </div>
+      </div>
+    </div>
+    <div class="pipe-card reg">
+      <div class="pipe-title">Regulatorio-legal</div>
+      <div class="pipe-sub">Dictámenes · DD · contratos</div>
+      <div class="pipe-rows">
+        <div class="pipe-row">
+          <span class="pipe-row-label">Dictamen regulatorio</span>
+          <span class="pipe-row-value" data-pipe="reg-dic" data-default="pendiente" data-type="text">pendiente</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">DD predio</span>
+          <span class="pipe-row-value" data-pipe="reg-dd-predio" data-default="pendiente" data-type="text">pendiente</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">DD Sweet Pacha</span>
+          <span class="pipe-row-value" data-pipe="reg-dd-sp" data-default="pendiente" data-type="text">pendiente</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">Cláusulas abiertas predio</span>
+          <span class="pipe-row-value warn" data-pipe="reg-cl-predio" data-default="0">0</span>
+        </div>
+        <div class="pipe-row">
+          <span class="pipe-row-label">Cláusulas abiertas SP</span>
+          <span class="pipe-row-value warn" data-pipe="reg-cl-sp" data-default="0">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   STATE · localStorage keys compartidos
+   con el blueprint
+   ═══════════════════════════════════════ */
+const STORAGE_START = 'lv_blueprint_start_date';
+const STORAGE_KPI = 'lv_blueprint_kpis';
+const STORAGE_PIPE = 'lv_tablero_pipes';
+const STORAGE_GATE = 'lv_blueprint_access';
+const ACCESS_KEY = '420';
+
+/* ═══════════════════════════════════════
+   DATA · hitos del blueprint (espejo)
+   ═══════════════════════════════════════ */
+const BLOCKS = {
+  1: {
+    title: 'Fundación',
+    startDay: 1, endDay: 30,
+    frase: 'Quitar riesgos legales, no producir plantas.',
+    kpis: [
+      { id: 'b1-1', text: 'Dictamen regulatorio de encuadre recibido por escrito' },
+      { id: 'b1-2', text: 'Estudio contable contratado y operando' },
+      { id: 'b1-3', text: 'Empresa de seguridad operando con contrato firmado' },
+      { id: 'b1-4', text: 'Abogado de contratos contratado con retainer mensual' },
+      { id: 'b1-5', text: 'Chief of Staff en nómina (o alta programada para Día 30)' },
+      { id: 'b1-6', text: '10 Looms grabados + Notion con 4 workspaces + cadencia personal funcionando' },
+      { id: 'b1-7', text: '5 primeras reuniones de inversor agendadas en CRM' }
+    ]
+  },
+  2: {
+    title: 'Core team + SOPs',
+    startDay: 31, endDay: 60,
+    frase: 'Escribir procesos, no ejecutarlos vos.',
+    kpis: [
+      { id: 'b2-1', text: 'Agrónomo fractional operando con retainer firmado' },
+      { id: 'b2-2', text: 'Capataz en nómina con RENATRE OK' },
+      { id: 'b2-3', text: '2 operarios dados de alta UATRE con libreta rural' },
+      { id: 'b2-4', text: '12 SOPs publicados en Notion y testeados una vez' },
+      { id: 'b2-5', text: 'Dashboard KPIs semanal funcionando 3 semanas seguidas' },
+      { id: 'b2-6', text: 'DD de ambos contratos completada por abogado' },
+      { id: 'b2-7', text: '15 reuniones de inversor completadas' },
+      { id: 'b2-8', text: '2 soft commits de al menos USD 30k cada uno' }
+    ]
+  },
+  3: {
+    title: 'Contratos + cierre de ronda',
+    startDay: 61, endDay: 90,
+    frase: 'Cerrar firmas, no seguir evaluando.',
+    kpis: [
+      { id: 'b3-1', text: 'Mutuo USD 160k cerrado (firma + transferencia de fondos)' },
+      { id: 'b3-2', text: 'Contrato del predio firmado (con condición suspensiva)' },
+      { id: 'b3-3', text: 'Contrato Sweet Pacha firmado (con take-or-pay)' },
+      { id: 'b3-4', text: 'Equipo operativo mínimo: capataz + 3–4 operarios + agrónomo fractional' },
+      { id: 'b3-5', text: '30 SOPs en Notion activos' },
+      { id: 'b3-6', text: 'Primer all-hands mensual con actas publicadas' }
+    ]
+  },
+  4: {
+    title: 'Operación asistida',
+    startDay: 91, endDay: 120,
+    frase: 'Comprobar que el sistema vive sin vos.',
+    kpis: [
+      { id: 'b4-1', text: 'Ausencia de 5 días ejecutada con diagnóstico post-vuelta' },
+      { id: 'b4-2', text: 'Agrónomo en nómina full-time' },
+      { id: 'b4-3', text: '4 operarios base + 4 temporarios pico contratados' },
+      { id: 'b4-4', text: 'Agencia marketing operando con primer entregable publicado' },
+      { id: 'b4-5', text: '40 SOPs y 3 políticas (bioseguridad, código conducta, compliance)' },
+      { id: 'b4-6', text: 'Primer reporte trimestral enviado a inversores del mutuo' },
+      { id: 'b4-7', text: 'Pipeline segundo cliente mapeado (3–5 proyectos I+D)' }
+    ]
+  },
+  5: {
+    title: 'Escalamiento + ISO gap',
+    startDay: 121, endDay: 150,
+    frase: 'Sentar bases de la próxima etapa.',
+    kpis: [
+      { id: 'b5-1', text: 'Gap analysis ISO/GACP entregado con roadmap 12–18 meses' },
+      { id: 'b5-2', text: '3–5 proyectos I+D mapeados como segundo cliente potencial' },
+      { id: 'b5-3', text: 'Offsite estratégico ejecutado con actas y decisiones publicadas' },
+      { id: 'b5-4', text: 'Equipo de 8–9 personas operando con dashboard semanal vivo' },
+      { id: 'b5-5', text: 'Primer reporte semestral enviado a inversores del mutuo' }
+    ]
+  },
+  6: {
+    title: 'Cierre',
+    startDay: 151, endDay: 180,
+    frase: 'Consolidar lo hecho, no planear más cambios.',
+    kpis: [
+      { id: 'b6-1', text: 'Review de performance hecha a 8 personas' },
+      { id: 'b6-2', text: 'Ausencia de 2 semanas ejecutada con diagnóstico post' },
+      { id: 'b6-3', text: '50 SOPs vivos + 5 políticas + operating cadence estable' },
+      { id: 'b6-4', text: 'Equipo maduro: capataz + agrónomo FT + Chief of Staff + 4 operarios + 1–2 más' },
+      { id: 'b6-5', text: 'Primer prospect de segundo cliente en conversación avanzada' },
+      { id: 'b6-6', text: 'Decisión tomada: part-time → full-time o part-time continuado' }
+    ]
+  }
+};
+
+const TOTAL_KPIS = Object.values(BLOCKS).reduce((s, b) => s + b.kpis.length, 0);
+
+/* ═══════════════════════════════════════
+   STORAGE HELPERS
+   ═══════════════════════════════════════ */
+function getStartDate() {
+  try { return localStorage.getItem(STORAGE_START); } catch(e) { return null; }
+}
+function setStartDate(date) {
+  try { localStorage.setItem(STORAGE_START, date); } catch(e) {}
+}
+function getKpiState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KPI) || '{}'); } catch(e) { return {}; }
+}
+function setKpiState(state) {
+  try { localStorage.setItem(STORAGE_KPI, JSON.stringify(state)); } catch(e) {}
+}
+function getPipeState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_PIPE) || '{}'); } catch(e) { return {}; }
+}
+function setPipeState(state) {
+  try { localStorage.setItem(STORAGE_PIPE, JSON.stringify(state)); } catch(e) {}
+}
+
+/* ═══════════════════════════════════════
+   DATE HELPERS
+   ═══════════════════════════════════════ */
+function daysBetween(fromISO, toDate) {
+  const from = new Date(fromISO + 'T00:00:00');
+  const to = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+  return Math.floor((to - from) / (1000 * 60 * 60 * 24)) + 1;
+}
+function addDays(date, n) {
+  const r = new Date(date);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+function fmtShortDate(d) {
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${d.getDate()} ${meses[d.getMonth()]}`;
+}
+function fmtLongDate(d) {
+  const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]}`;
+}
+function getWeekNumber(d) {
+  const date = new Date(d.getTime());
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  const week1 = new Date(date.getFullYear(), 0, 4);
+  return 1 + Math.round(((date - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+function getMondayOfWeek(d) {
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
+}
+function blockOfDay(day) {
+  if (day < 1) return { num: 0, label: 'Pre-arranque' };
+  if (day <= 30) return { num: 1, label: 'Bloque 1 · Fundación' };
+  if (day <= 60) return { num: 2, label: 'Bloque 2 · Core team' };
+  if (day <= 90) return { num: 3, label: 'Bloque 3 · Contratos' };
+  if (day <= 120) return { num: 4, label: 'Bloque 4 · Operación asistida' };
+  if (day <= 150) return { num: 5, label: 'Bloque 5 · Escalamiento' };
+  if (day <= 180) return { num: 6, label: 'Bloque 6 · Cierre' };
+  return { num: 7, label: 'Post-blueprint' };
+}
+
+/* ═══════════════════════════════════════
+   SALUDO SEGÚN HORA
+   ═══════════════════════════════════════ */
+function getSaludo() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Buen día';
+  if (h < 19) return 'Buenas tardes';
+  return 'Buenas noches';
+}
+
+/* ═══════════════════════════════════════
+   RENDER · TRACKER Y BLOQUES
+   ═══════════════════════════════════════ */
+function updateTrackerAndBlocks() {
+  const startDate = getStartDate();
+  const kpiState = getKpiState();
+  const today = new Date();
+
+  // Saludo y fecha
+  document.getElementById('saludo').textContent = getSaludo();
+  document.getElementById('fechaHoy').textContent = fmtLongDate(today);
+  document.getElementById('semanaNum').textContent = `Semana ${String(getWeekNumber(today)).padStart(2, '0')}`;
+
+  // Input fecha
+  const input = document.getElementById('startDate');
+  if (startDate) input.value = startDate;
+
+  // Progreso global de KPIs
+  const totalDone = Object.values(kpiState).filter(Boolean).length;
+  const globalPct = Math.round((totalDone / TOTAL_KPIS) * 100);
+  document.getElementById('kpiGlobalProgress').innerHTML = `${globalPct}<small>%</small>`;
+  document.getElementById('kpiGlobalProgressNote').textContent = `${totalDone} de ${TOTAL_KPIS} hitos`;
+  document.getElementById('avanceTotal').textContent = `${totalDone} de ${TOTAL_KPIS} hitos completados`;
+
+  // Progreso por bloque
+  for (let bn = 1; bn <= 6; bn++) {
+    const block = BLOCKS[bn];
+    const done = block.kpis.filter(k => kpiState[k.id]).length;
+    const pct = Math.round((done / block.kpis.length) * 100);
+
+    const sidebarPct = document.getElementById(`blockPct${bn}`);
+    if (sidebarPct) sidebarPct.textContent = `${done}/${block.kpis.length}`;
+
+    const pcBar = document.getElementById(`pcBar${bn}`);
+    if (pcBar) pcBar.style.height = `${pct}%`;
+    const pcVal = document.getElementById(`pcVal${bn}`);
+    if (pcVal) pcVal.textContent = `${pct}%`;
+  }
+
+  // Si no hay fecha, mostramos bloque 1 por default en la vista central
+  if (!startDate) {
+    document.getElementById('trackerDay').innerHTML = '— <small>de 180</small>';
+    document.getElementById('trackerFill').style.width = '0%';
+    document.getElementById('trackerPct').textContent = '—%';
+    document.getElementById('trackerBloque').textContent = 'Configurá fecha →';
+    renderCurrentBlock(1, 0);
+    renderBanner(null, null, 0);
+    renderKPICards(null, null, 0);
+    renderWeekGrid(today, null, null);
+    return;
+  }
+
+  const day = daysBetween(startDate, today);
+  const block = blockOfDay(day);
+  const pct = Math.min(100, Math.max(0, (day / 180) * 100));
+
+  document.getElementById('trackerDay').innerHTML = `${day} <small>de 180</small>`;
+  document.getElementById('trackerFill').style.width = pct.toFixed(1) + '%';
+  document.getElementById('trackerPct').textContent = pct.toFixed(0) + '%';
+  document.getElementById('trackerBloque').textContent = block.label;
+
+  // Marcar bloques en sidebar (past/current/future)
+  for (let bn = 1; bn <= 6; bn++) {
+    const nav = document.getElementById(`blockNav${bn}`);
+    if (!nav) continue;
+    nav.classList.remove('past', 'current', 'future');
+    if (bn < block.num) nav.classList.add('past');
+    else if (bn === block.num) nav.classList.add('current');
+    else nav.classList.add('future');
+  }
+
+  // Marcar bloques en el mini chart
+  for (let bn = 1; bn <= 6; bn++) {
+    const col = document.querySelector(`.pc-col[data-b="${bn}"]`);
+    if (col) col.classList.toggle('current', bn === block.num);
+  }
+
+  const activeBlock = block.num >= 1 && block.num <= 6 ? block.num : (block.num === 7 ? 6 : 1);
+  renderCurrentBlock(activeBlock, day);
+  renderKPICards(day, activeBlock, totalDone);
+  renderBanner(day, activeBlock, totalDone);
+  renderWeekGrid(today, day, activeBlock);
+}
+
+/* ═══════════════════════════════════════
+   RENDER · HITOS DEL BLOQUE ACTUAL
+   ═══════════════════════════════════════ */
+function renderCurrentBlock(blockNum, currentDay) {
+  const block = BLOCKS[blockNum];
+  const kpiState = getKpiState();
+  const listEl = document.getElementById('currentBlockList');
+
+  document.getElementById('cbTitle').textContent = `Bloque ${blockNum} · ${block.title}`;
+  document.getElementById('cbMeta').textContent = `Días ${block.startDay} a ${block.endDay}`;
+
+  const done = block.kpis.filter(k => kpiState[k.id]).length;
+  document.getElementById('cbProgress').textContent = `${done}/${block.kpis.length}`;
+
+  listEl.innerHTML = '';
+  block.kpis.forEach(kpi => {
+    const isDone = !!kpiState[kpi.id];
+    const item = document.createElement('div');
+    item.className = 'kpi-item' + (isDone ? ' done' : '');
+    item.dataset.id = kpi.id;
+    item.innerHTML = `
+      <div class="kpi-check"></div>
+      <div class="kpi-text">${kpi.text}</div>
+    `;
+    item.addEventListener('click', () => {
+      const state = getKpiState();
+      state[kpi.id] = !state[kpi.id];
+      setKpiState(state);
+      updateTrackerAndBlocks();
+    });
+    listEl.appendChild(item);
+  });
+}
+
+/* ═══════════════════════════════════════
+   RENDER · KPI CARDS (próximo hito etc)
+   ═══════════════════════════════════════ */
+function renderKPICards(currentDay, activeBlock, totalDone) {
+  const kpiState = getKpiState();
+
+  // Próximo hito: el primero no completado del bloque activo (o siguiente)
+  let nextHito = null;
+  let nextBlock = null;
+  outer: for (let bn = activeBlock || 1; bn <= 6; bn++) {
+    for (const k of BLOCKS[bn].kpis) {
+      if (!kpiState[k.id]) {
+        nextHito = k;
+        nextBlock = bn;
+        break outer;
+      }
+    }
+  }
+
+  if (nextHito) {
+    // Extraer palabras clave del hito
+    const shortText = nextHito.text.length > 32 ? nextHito.text.substring(0, 32) + '…' : nextHito.text;
+    document.getElementById('kpiNextHitoShort').textContent = shortText.split(' ').slice(0, 3).join(' ');
+    document.getElementById('kpiNextHitoShort').style.fontSize = '22px';
+    document.getElementById('kpiNextHitoNote').textContent = `Bloque ${nextBlock} · ${BLOCKS[nextBlock].title}`;
+    document.getElementById('nextHito').textContent = nextHito.text.length > 50 ? nextHito.text.substring(0, 50) + '…' : nextHito.text;
+  } else {
+    document.getElementById('kpiNextHitoShort').textContent = '✓';
+    document.getElementById('kpiNextHitoShort').style.fontSize = '40px';
+    document.getElementById('kpiNextHitoNote').textContent = 'Todo completado · día 180';
+    document.getElementById('nextHito').textContent = 'todo al día';
+  }
+
+  // Hitos del bloque actual
+  if (activeBlock) {
+    const block = BLOCKS[activeBlock];
+    const done = block.kpis.filter(k => kpiState[k.id]).length;
+    document.getElementById('kpiBlockProgress').innerHTML = `${done}<small>/${block.kpis.length}</small>`;
+    document.getElementById('kpiBlockProgressNote').textContent = `en "${block.title}"`;
+  } else {
+    document.getElementById('kpiBlockProgress').innerHTML = `0`;
+    document.getElementById('kpiBlockProgressNote').textContent = `definí fecha para ver`;
+  }
+
+  // Días restantes
+  if (currentDay !== null) {
+    const left = Math.max(0, 180 - currentDay);
+    document.getElementById('kpiDaysLeft').textContent = left;
+    if (left === 0) document.getElementById('kpiDaysLeftNote').textContent = '¡Llegaste al día 180!';
+    else if (currentDay < 1) document.getElementById('kpiDaysLeftNote').textContent = 'arranca el día 1';
+    else document.getElementById('kpiDaysLeftNote').textContent = 'al día 180 del blueprint';
+  } else {
+    document.getElementById('kpiDaysLeft').textContent = '—';
+  }
+
+  // Next countdown (oculto si no hay fecha)
+  const countdownEl = document.getElementById('nextCountdown');
+  if (currentDay !== null && currentDay >= 1 && currentDay <= 180) {
+    const daysIn = currentDay;
+    countdownEl.textContent = `Día ${daysIn} de 180 · ${Math.round((daysIn/180)*100)}% del camino`;
+  } else {
+    countdownEl.textContent = 'tracker no configurado';
+  }
+}
+
+/* ═══════════════════════════════════════
+   RENDER · BANNER DE ESTADO
+   ═══════════════════════════════════════ */
+function renderBanner(currentDay, activeBlock, totalDone) {
+  const banner = document.getElementById('banner');
+  const title = document.getElementById('bannerTitle');
+  const text = document.getElementById('bannerText');
+  const chips = document.getElementById('bannerChips');
+
+  banner.classList.remove('alert', 'ok');
+  chips.innerHTML = '';
+
+  if (currentDay === null) {
+    title.textContent = 'Configurá tu fecha de arranque.';
+    text.textContent = 'Todavía no definiste cuándo empezás los 180 días. Andá al tracker del sidebar y seleccionalo. Todos los números de este tablero se van a actualizar al toque.';
+    return;
+  }
+
+  if (currentDay < 1) {
+    title.textContent = 'Todavía no arrancaste.';
+    text.textContent = `Tu fecha de arranque está programada para el futuro. Faltan ${1 - currentDay} días para el Día 1.`;
+    return;
+  }
+
+  if (currentDay > 180) {
+    title.textContent = '¡Cruzaste la meta de los 180 días!';
+    text.textContent = `Ya pasaste el cierre del blueprint. Completaste ${totalDone} de ${TOTAL_KPIS} hitos (${Math.round((totalDone/TOTAL_KPIS)*100)}%). Es momento de armar el siguiente ciclo.`;
+    banner.classList.add('ok');
+    return;
+  }
+
+  // Calcular si va "al día" con el bloque: expected pct = (dayInBlock / blockLength)
+  const kpiState = getKpiState();
+  const block = BLOCKS[activeBlock];
+  const dayInBlock = currentDay - block.startDay + 1;
+  const blockLength = block.endDay - block.startDay + 1;
+  const expectedPct = dayInBlock / blockLength;
+  const actualPct = block.kpis.filter(k => kpiState[k.id]).length / block.kpis.length;
+  const atrasado = actualPct < expectedPct - 0.15; // 15% de tolerancia
+
+  // Hitos pendientes del bloque actual (máx 3 para chips)
+  const pendientes = block.kpis.filter(k => !kpiState[k.id]).slice(0, 3);
+
+  if (atrasado && pendientes.length > 0) {
+    banner.classList.add('alert');
+    title.innerHTML = `Vas un poco atrás con el <em style="font-style:italic;color:var(--accent-warm)">Bloque ${activeBlock}</em>.`;
+    text.textContent = `Día ${currentDay} de 180 · pasaron ${dayInBlock} de ${blockLength} días del bloque pero completaste ${Math.round(actualPct*100)}% de los hitos (esperable: ${Math.round(expectedPct*100)}%). Primeros pendientes:`;
+    pendientes.forEach(p => {
+      const chip = document.createElement('div');
+      chip.className = 'banner-chip';
+      chip.dataset.b = activeBlock;
+      const shortText = p.text.length > 60 ? p.text.substring(0, 60) + '…' : p.text;
+      chip.innerHTML = `<span class="banner-chip-dot"></span><strong>${shortText}</strong>`;
+      chips.appendChild(chip);
+    });
+  } else if (pendientes.length === 0) {
+    banner.classList.add('ok');
+    title.innerHTML = `Bloque ${activeBlock} <em style="font-style:italic;color:var(--accent)">completado</em>.`;
+    text.textContent = `Terminaste todos los hitos del bloque actual. Podés mirar el siguiente bloque o usar este tiempo para recalibrar.`;
+  } else {
+    banner.classList.add('ok');
+    title.innerHTML = `Al día con el <em style="font-style:italic;color:var(--accent)">Bloque ${activeBlock}</em>.`;
+    text.textContent = `Día ${currentDay} de 180 · avance consistente con el ritmo esperado. Quedan ${pendientes.length} hitos abiertos en este bloque.`;
+    pendientes.forEach(p => {
+      const chip = document.createElement('div');
+      chip.className = 'banner-chip';
+      chip.dataset.b = activeBlock;
+      const shortText = p.text.length > 60 ? p.text.substring(0, 60) + '…' : p.text;
+      chip.innerHTML = `<span class="banner-chip-dot"></span><strong>${shortText}</strong>`;
+      chips.appendChild(chip);
+    });
+  }
+}
+
+/* ═══════════════════════════════════════
+   RENDER · SEMANA VIVA
+   ═══════════════════════════════════════ */
+function renderWeekGrid(today, currentDay, activeBlock) {
+  const monday = getMondayOfWeek(new Date(today));
+  const friday = addDays(monday, 4);
+
+  // Header CW
+  document.getElementById('cwLabel').textContent = `CW ${String(getWeekNumber(today)).padStart(2, '0')}`;
+  document.getElementById('cwNum').textContent = monday.getDate();
+
+  // Fechas de cada día
+  document.getElementById('dateMon').textContent = fmtShortDate(monday);
+  document.getElementById('dateTue').textContent = fmtShortDate(addDays(monday, 1));
+  document.getElementById('dateWed').textContent = fmtShortDate(addDays(monday, 2));
+  document.getElementById('dateThu').textContent = fmtShortDate(addDays(monday, 3));
+  document.getElementById('dateFri').textContent = fmtShortDate(friday);
+
+  document.getElementById('weekRange').textContent = 
+    `${fmtShortDate(monday)} · ${fmtShortDate(friday)}`;
+
+  // Eventos de tarde según bloque activo (sugerencias contextuales)
+  const ideas = {
+    1: [
+      { code: 'REG', title: '3 cotizaciones a estudio contable', day: 'dayMonPM', time: '14:00–15:00' },
+      { code: 'REG', title: 'Consultor regulatorio · dictamen encuadre', day: 'dayTuePM', time: '14:00–15:00' },
+      { code: 'OP', title: 'Visita 3 empresas de seguridad', day: 'dayWedPM', time: '14:00–16:00' },
+      { code: 'INV', title: 'Agendar 2 reuniones inversores', day: 'dayThuPM', time: '14:00–15:00' }
+    ],
+    2: [
+      { code: 'OP', title: 'Entrevistas agrónomo fractional', day: 'dayMonPM', time: '14:00–16:00' },
+      { code: 'OP', title: 'Visitar capataces candidatos', day: 'dayTuePM', time: '14:00–16:00' },
+      { code: 'OP', title: 'Revisión SOPs con Chief of Staff', day: 'dayWedPM', time: '14:00–15:30' },
+      { code: 'INV', title: '3 reuniones de inversor', day: 'dayThuPM', time: '14:00–17:00' }
+    ],
+    3: [
+      { code: 'INV', title: 'Cierre soft commits', day: 'dayMonPM', time: '14:00–17:00' },
+      { code: 'REG', title: 'Abogado · revisión cláusulas predio', day: 'dayTuePM', time: '14:00–15:30' },
+      { code: 'REG', title: 'Reunión Sweet Pacha · take-or-pay', day: 'dayWedPM', time: '14:00–16:00' },
+      { code: 'INV', title: 'Follow-ups hard commits', day: 'dayThuPM', time: '14:00–17:00' }
+    ],
+    4: [
+      { code: 'OP', title: 'Planning ausencia 5 días', day: 'dayMonPM', time: '14:00–15:00' },
+      { code: 'OP', title: 'Brief Chief of Staff · cobertura', day: 'dayTuePM', time: '14:00–15:00' },
+      { code: 'INV', title: 'Reporte trimestral a inversores', day: 'dayWedPM', time: '14:00–16:00' },
+      { code: 'OP', title: 'Altas operarios adicionales', day: 'dayThuPM', time: '14:00–15:30' }
+    ],
+    5: [
+      { code: 'REG', title: 'Gap analysis ISO/GACP · consultor', day: 'dayMonPM', time: '14:00–17:00' },
+      { code: 'OP', title: 'Mapeo segundo cliente · 3–5 I+D', day: 'dayTuePM', time: '14:00–16:00' },
+      { code: 'OP', title: 'Preparación offsite equipo', day: 'dayWedPM', time: '14:00–15:00' },
+      { code: 'REV', title: 'Offsite estratégico · quarterly', day: 'dayThuPM', time: '09:00–17:00' }
+    ],
+    6: [
+      { code: 'REV', title: 'Performance review 360°', day: 'dayMonPM', time: '14:00–17:00' },
+      { code: 'REV', title: 'Performance review 360°', day: 'dayTuePM', time: '14:00–17:00' },
+      { code: 'OP', title: 'Brief ausencia 2 semanas', day: 'dayWedPM', time: '14:00–15:00' },
+      { code: 'INV', title: 'Segundo cliente · conversación avanzada', day: 'dayThuPM', time: '14:00–16:00' }
+    ]
+  };
+
+  // Limpiar eventos PM antes de repintar
+  ['dayMonPM','dayTuePM','dayWedPM','dayThuPM','dayFriPM'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+
+  if (activeBlock && ideas[activeBlock]) {
+    ideas[activeBlock].forEach(ev => {
+      const dayEl = document.getElementById(ev.day);
+      if (!dayEl) return;
+      const codeClass = ev.code === 'INV' ? 'inv' : ev.code === 'REG' ? 'reg' : ev.code === 'REV' ? 'rev' : ev.code === 'PER' ? 'per' : 'op';
+      const eventEl = document.createElement('div');
+      eventEl.className = `week-event ${codeClass}`;
+      eventEl.innerHTML = `
+        <div class="week-event-head">
+          <span class="week-event-code">${ev.code}</span>
+          <span class="week-event-time">${ev.time}</span>
+        </div>
+        <div class="week-event-title">${ev.title}</div>
+      `;
+      dayEl.appendChild(eventEl);
+    });
+  }
+}
+
+/* ═══════════════════════════════════════
+   PIPELINES EDITABLES
+   ═══════════════════════════════════════ */
+function renderPipes() {
+  const state = getPipeState();
+  document.querySelectorAll('.pipe-row-value').forEach(el => {
+    const key = el.dataset.pipe;
+    const type = el.dataset.type || 'number';
+    const unit = el.dataset.unit || '';
+    const def = el.dataset.default;
+    const val = state[key] !== undefined ? state[key] : def;
+    if (type === 'text') {
+      el.textContent = val;
+    } else {
+      const num = Number(val) || 0;
+      el.textContent = unit ? `${unit}${num.toLocaleString('es-AR')}` : num.toLocaleString('es-AR');
+    }
+  });
+}
+
+function bindPipeEditing() {
+  document.querySelectorAll('.pipe-row-value').forEach(el => {
+    el.addEventListener('click', () => {
+      if (el.classList.contains('editing')) return;
+      const key = el.dataset.pipe;
+      const type = el.dataset.type || 'number';
+      const unit = el.dataset.unit || '';
+      const state = getPipeState();
+      const currentVal = state[key] !== undefined ? state[key] : el.dataset.default;
+
+      const input = document.createElement('input');
+      input.type = type === 'number' ? 'number' : 'text';
+      input.value = type === 'number' ? (Number(currentVal) || 0) : currentVal;
+      input.style.width = '80px';
+      input.style.padding = '3px 6px';
+      input.style.fontFamily = "'JetBrains Mono', monospace";
+      input.style.fontSize = '12px';
+      input.style.border = '1px solid var(--accent)';
+      input.style.background = 'var(--bg-main)';
+      input.style.color = 'var(--ink)';
+      input.style.borderRadius = '2px';
+      input.style.outline = 'none';
+      input.style.textAlign = 'right';
+
+      el.innerHTML = '';
+      el.appendChild(input);
+      el.classList.add('editing');
+      input.focus();
+      input.select();
+
+      const save = () => {
+        const newVal = input.value.trim();
+        const state = getPipeState();
+        state[key] = newVal;
+        setPipeState(state);
+        el.classList.remove('editing');
+        if (type === 'text') {
+          el.textContent = newVal || el.dataset.default;
+        } else {
+          const num = Number(newVal) || 0;
+          el.textContent = unit ? `${unit}${num.toLocaleString('es-AR')}` : num.toLocaleString('es-AR');
+        }
+      };
+
+      input.addEventListener('blur', save);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); save(); input.blur(); }
+        if (e.key === 'Escape') { input.value = currentVal; save(); input.blur(); }
+      });
+    });
+  });
+}
+
+/* ═══════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════ */
+document.getElementById('startDate').addEventListener('change', (e) => {
+  setStartDate(e.target.value);
+  updateTrackerAndBlocks();
+});
+
+document.getElementById('resetLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (confirm('¿Reiniciar todos los checklists? Esto borra tu progreso en el blueprint y en el tablero.')) {
+    try {
+      localStorage.removeItem(STORAGE_KPI);
+      localStorage.removeItem(STORAGE_PIPE);
+    } catch(e) {}
+    updateTrackerAndBlocks();
+    renderPipes();
+  }
+});
+
+/* ═══════════════════════════════════════
+   GATE
+   ═══════════════════════════════════════ */
+(function initGate() {
+  const gateEl = document.getElementById('gate');
+  const form = document.getElementById('gateForm');
+  const keyInput = document.getElementById('gate-key');
+  const submitBtn = document.getElementById('gateSubmit');
+  const errorEl = document.getElementById('gateError');
+
+  try {
+    const stored = localStorage.getItem(STORAGE_GATE);
+    if (stored) {
+      const session = JSON.parse(stored);
+      const validFor = 7 * 24 * 60 * 60 * 1000;
+      if (session.ts && (Date.now() - session.ts) < validFor) {
+        unlock();
+        return;
+      }
+    }
+  } catch(e) {}
+
+  keyInput.addEventListener('input', () => {
+    submitBtn.disabled = keyInput.value.trim().length === 0;
+    errorEl.classList.remove('show');
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (keyInput.value.trim() !== ACCESS_KEY) {
+      errorEl.classList.add('show');
+      keyInput.focus();
+      keyInput.select();
+      return;
+    }
+    try {
+      localStorage.setItem(STORAGE_GATE, JSON.stringify({ ts: Date.now() }));
+    } catch(e) {}
+    unlock();
+  });
+
+  function unlock() {
+    document.body.classList.remove('locked');
+    gateEl.style.display = 'none';
+    updateTrackerAndBlocks();
+    renderPipes();
+    bindPipeEditing();
+  }
+
+  setTimeout(() => keyInput.focus(), 100);
+})();
+</script>
+
+</body>
+</html>
